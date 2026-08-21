@@ -1,382 +1,436 @@
-TechStory AI - README.md (DETAILED VERSION)
+# 🤖 TechStory AI — Autonomous Technology Story Generator
+
+> **An always-on serverless creative agent that automatically generates a fresh technology-themed story every day.**
+> 
+---
+
+## 📖 About
+
+**TechStory AI** is a fully autonomous, serverless creative agent that generates a unique technology-themed story every day without manual intervention.
+
+The system automatically wakes up at **8:00 AM IST**, generates a new story by combining different characters, technologies, problems, solutions, and locations, stores the result in **Amazon DynamoDB**, and makes the latest story available through a website hosted on **Amazon S3**.
+
+### 🎯 Core Idea
+
+> **"A technology story that never sleeps."**
+
+The project demonstrates how AWS serverless services can be combined to build an **event-driven autonomous creative system** with minimal infrastructure and maintenance.
+
+---
+
+## 🏗️ Architecture
+
+```text
+                         ┌──────────────────────────┐
+                         │ Amazon EventBridge       │
+                         │ Scheduler                │
+                         │                          │
+                         │ Daily 8:00 AM IST        │
+                         └────────────┬─────────────┘
+                                      │
+                                      ▼
+                         ┌──────────────────────────┐
+                         │ AWS Lambda               │
+                         │                          │
+                         │ Python 3.12              │
+                         │ Story Generation Engine  │
+                         └────────────┬─────────────┘
+                                      │
+                                      ▼
+                         ┌──────────────────────────┐
+                         │ Amazon DynamoDB          │
+                         │                          │
+                         │ Story Storage            │
+                         │ Date + Category          │
+                         └────────────┬─────────────┘
+                                      │
+                                      ▼
+                         ┌──────────────────────────┐
+                         │ Amazon S3                │
+                         │                          │
+                         │ Static Website           │
+                         │ Latest Story             │
+                         └──────────────────────────┘
+```
 
+### Architecture Flow
 
+```text
+EventBridge
+     │
+     ▼
+Lambda
+     │
+     ├── Generate Story
+     │
+     ▼
+DynamoDB
+     │
+     ▼
+S3 Website
+```
 
+---
 
+## ☁️ AWS Services
 
+| AWS Service                      | Purpose                                       |
+| -------------------------------- | --------------------------------------------- |
+| **AWS Lambda**                   | Runs the autonomous story-generation logic    |
+| **Amazon EventBridge Scheduler** | Automatically triggers Lambda every day       |
+| **Amazon DynamoDB**              | Stores generated stories and metadata         |
+| **Amazon S3**                    | Hosts the static website                      |
+| **AWS IAM**                      | Controls permissions between AWS services     |
+| **Amazon CloudWatch**            | Provides Lambda execution logs and monitoring |
+
+### Lambda Configuration
+
+* **Runtime:** Python 3.12
+* **Memory:** 256 MB
+* **Timeout:** 30 seconds
+* **Execution:** Event-driven
+
+### DynamoDB Configuration
+
+* **Table:** `TechStoryCreations`
+* **Partition Key:** `date`
+* **Sort Key:** `category`
+* **Billing Mode:** `PAY_PER_REQUEST`
+
+### Scheduling
+
+The agent runs automatically every day at:
 
+```text
+08:00 AM IST
+Asia/Kolkata
+```
 
+---
 
+## ⚙️ How It Works
 
+### 1. ⏰ Automatic Trigger
 
+Amazon EventBridge Scheduler triggers the Lambda function every day at **8:00 AM IST**.
 
+### 2. 🤖 Lambda Execution
 
+AWS Lambda starts the Python-based story generation engine.
 
-\# 🤖 TechStory AI - Autonomous Technology Story Generator
+### 3. 🎲 Story Element Selection
 
+The system selects elements from predefined categories:
 
+| Element      | Examples                                             |
+| ------------ | ---------------------------------------------------- |
+| Characters   | Engineers, Scientists, Farmers, Researchers          |
+| Technologies | AI, IoT, Robotics, 5G, Quantum Computing             |
+| Problems     | System failures, hidden dangers, mysterious signals  |
+| Solutions    | Breakthroughs, automation, open-source solutions     |
+| Locations    | Cities, Villages, Labs, Hospitals, Research Stations |
 
-\[!\[AWS](https://img.shields.io/badge/AWS-Serverless-orange)](https://aws.amazon.com/)
+### 4. 📝 Story Generation
 
-\[!\[Lambda](https://img.shields.io/badge/Lambda-Python%203.12-blue)](https://aws.amazon.com/lambda/)
+The selected elements are combined to create:
 
-\[!\[Status](https://img.shields.io/badge/Agent-Active-brightgreen)](http://techstory-ai-dharaneesh.s3-website-us-east-1.amazonaws.com)
+* Story title
+* Technology description
+* Narrative
+* Application
+* Key insight
 
+### 5. 💾 Data Storage
 
+The generated story and metadata are stored in Amazon DynamoDB.
 
-> An always-on creative agent that autonomously generates unique technology stories every day using AWS Lambda + EventBridge + DynamoDB + S3.
+### 6. 🌐 Website Display
 
+The latest story is displayed through the static website hosted on Amazon S3.
 
+---
 
-\*\*🏆 Built for:\*\* \[AWS Weekend Creative Agent Challenge (August 2026)](https://community.aws/builderscenter)
+## ✨ Key Features
 
+| Feature                           | Description                                         |
+| --------------------------------- | --------------------------------------------------- |
+| 🤖 **Fully Autonomous**           | No manual intervention after deployment             |
+| 📅 **Daily Generation**           | Automatically creates a new story every day         |
+| 🎲 **Combinatorial Generation**   | Combines multiple story dimensions                  |
+| 📚 **100,000+ Combination Space** | 10 × 10 × 10 × 10 × 10 possible combinations        |
+| ☁️ **Serverless**                 | No traditional server infrastructure required       |
+| 💾 **Persistent Storage**         | Stories are stored in DynamoDB                      |
+| 🌐 **Live Website**               | Latest generated story is publicly accessible       |
+| 🔄 **Reproducible**               | Date-based seed can provide deterministic selection |
+| ⚡ **Event-Driven**                | EventBridge automatically starts the workflow       |
+| 🔐 **IAM Controlled**             | AWS IAM manages service permissions                 |
+| 📈 **Scalable Architecture**      | Managed AWS services can scale with demand          |
 
+> **Note:** The 100,000+ figure represents the theoretical combination space, not a guarantee of 100,000 semantically unique stories.
 
-\*\*🌐 Live Website:\*\* \[http://techstory-ai-dharaneesh.s3-website-us-east-1.amazonaws.com](http://techstory-ai-dharaneesh.s3-website-us-east-1.amazonaws.com)
+---
 
+## 📁 Project Structure
 
+```text
+TechStory-AI/
+│
+├── lambda_function.py
+│   └── AWS Lambda story generation engine
+│
+├── index.html
+│   └── Static website frontend
+│
+├── trust-policy.json
+│   └── IAM trust policy for Lambda
+│
+└── README.md
+    └── Project documentation
+```
 
-\*\*📝 Builder Center Article:\*\* \[https://builder.aws.com/content/3IDiDXNiK7JXM1e3i0QM0DNUUsA](https://builder.aws.com/content/3IDiDXNiK7JXM1e3i0QM0DNUUsA/weekend-creative-agent-challenge-techstory-ai-autonomous-technology-story-generator)
+### Main Files
 
+**`lambda_function.py`**
 
+Contains:
 
-\---
+* Story generation logic
+* Character definitions
+* Technology definitions
+* Problem definitions
+* Solution definitions
+* Location definitions
+* Title generation
+* DynamoDB storage logic
 
+**`index.html`**
 
+Contains:
 
-\## 📖 About
+* Website interface
+* Latest story display
+* Technology information
+* Agent status
+* Date information
+* Responsive UI
 
+---
 
+## 🚀 Deployment
 
-TechStory AI is a fully autonomous, serverless creative agent that generates unique technology-themed stories every single day without any manual intervention. Every morning at \*\*8:00 AM IST\*\*, the agent wakes up, creates a brand-new story combining characters, technologies, problems, solutions, and locations, then stores it and displays it on a live website.
+### Prerequisites
 
+Install and configure:
 
+* AWS Account
+* AWS CLI
+* Python 3.12
+* PowerShell / Terminal
+* ZIP utility
 
-\*\*Zero human interaction required after deployment.\*\*
-
-
-
-\---
-
-
-
-\## 🏗️ Architecture
-
-┌─────────────────────────────────────────────────────────────┐ │ TechStory AI Architecture │ ├─────────────────────────────────────────────────────────────┤ │ │ │ ┌──────────────┐ ┌──────────────┐ ┌───────────┐ │ │ │ EventBridge │────▶│ Lambda │────▶│ DynamoDB │ │ │ │ (Scheduler) │ │ (Generator) │ │ (Storage) │ │ │ └──────────────┘ └──────────────┘ └───────────┘ │ │ │ │ │ │ │ Daily 8:00 AM IST │ │ │ │ ▼ │ │ │ ┌───────────┐ │ │ └──────────────────────────────────▶│ S3 │ │ │ │ (Website) │ │ │ └───────────┘ │ │ │ └─────────────────────────────────────────────────────────────┘
-
-
-
-
-
-\---
-
-
-
-\## ⚙️ AWS Services Used
-
-
-
-| Service | Purpose | Tier |
-
-|---------|---------|------|
-
-| \*\*AWS Lambda\*\* | Python 3.12 story generation engine (256MB, 30s timeout) | Free Tier |
-
-| \*\*Amazon EventBridge Scheduler\*\* | Daily 8:00 AM IST automatic trigger (cron-based) | Free Tier |
-
-| \*\*Amazon DynamoDB\*\* | Story storage with composite key (date + category) | Free Tier |
-
-| \*\*Amazon S3\*\* | Static website hosting with public access | Free Tier |
-
-
-
-\*\*Total Monthly Cost: $0.00\*\* (runs entirely on AWS Free Tier)
-
-
-
-\---
-
-
-
-\## 🧠 How It Works
-
-
-
-\### Story Generation Engine
-
-
-
-The Lambda function uses a \*\*combinatorial creativity engine\*\* with:
-
-
-
-| Element | Count | Examples |
-
-|---------|-------|----------|
-
-| Characters | 10 | Engineers, Scientists, Farmers, Musicians, Hackers |
-
-| Technologies | 10 | AI+IoT, Robotics+Drones, Quantum+Weather, 5G+Emergency |
-
-| Problems | 10 | Hidden dangers, Mysterious signals, Chain reactions |
-
-| Solutions | 10 | Global adoption, Award-winning, Open-source success |
-
-| Locations | 10 | Cities, Villages, Labs, Hospitals, Arctic stations |
-
-
-
-\*\*Total Possible Combinations: 10 × 10 × 10 × 10 × 10 = 100,000+ unique stories\*\*
-
-
-
-\### Daily Flow
-
-
-
-1\. \*\*8:00 AM IST\*\* — EventBridge triggers Lambda function
-
-2\. \*\*Lambda\*\* uses current date as random seed (ensures reproducibility)
-
-3\. \*\*Randomly selects\*\* one element from each category
-
-4\. \*\*Generates\*\* title + full story narrative
-
-5\. \*\*Saves\*\* to DynamoDB with metadata (date, category, character, technology, timestamp)
-
-6\. \*\*Website\*\* on S3 displays the latest generated story
-
-
-
-\---
-
-
-
-\## 📖 Sample Output
-
-
-
-\### Today's Story (August 21, 2026)
-
-
-
-\*\*🏷️ Category:\*\* 5G + Emergency
-
-
-
-\*\*📌 Title:\*\* \*When Karthik Discovered the Power of 5G + Emergency\*
-
-
-
-> A village farmer named Karthik was working in a small fishing town facing rising sea levels when something extraordinary happened. Using 5G + Emergency - Ultra-fast networks enabling instant emergency response - they accidentally triggered a chain reaction that changed everything. What followed was nothing short of remarkable. Against all odds, a breakthrough emerged. The pilot program was so successful that it expanded to 50 cities within months.
-
->
-
-> \*\*Technology:\*\* 5G + Emergency
-
-> \*\*Real-world application:\*\* Ultra-fast networks enabling instant emergency response
-
-> \*\*Key insight:\*\* Innovation happens when curiosity meets persistence.
-
-
-
-\---
-
-
-
-\## 📁 Project Structure
-
-
-
-TechStory-AI/ │ ├── lambda\_function.py # AWS Lambda function - Story generation engine │ # Contains: Characters, Technologies, Problems, │ # Solutions, Locations, Title templates │ ├── index.html # S3 static website - Modern dark theme UI │ # Displays: Story title, content, tech info, │ # agent status, date │ └── README.md # Project documentation
-
-
-
-
-
-\---
-
-
-
-\## 🚀 Deployment Guide
-
-
-
-\### Prerequisites
-
-
-
-\- AWS Account (Free Tier eligible)
-
-\- AWS CLI configured with credentials
-
-\- PowerShell or Terminal
-
-
-
-\### Step-by-Step Deployment
-
-
+Verify AWS CLI:
 
 ```bash
+aws --version
+```
 
-\# 1. Create IAM Role for Lambda
+Verify AWS authentication:
 
-aws iam create-role --role-name TechStoryLambdaRole \\
+```bash
+aws sts get-caller-identity
+```
 
-&#x20; --assume-role-policy-document file://trust-policy.json
+### Step 1 — Create IAM Role
 
+Create `trust-policy.json`:
 
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+```
 
-aws iam attach-role-policy --role-name TechStoryLambdaRole \\
+Create the Lambda role:
 
-&#x20; --policy-arn arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+```bash
+aws iam create-role \
+  --role-name TechStoryLambdaRole \
+  --assume-role-policy-document file://trust-policy.json
+```
 
+Attach the required permissions:
 
+```bash
+aws iam attach-role-policy \
+  --role-name TechStoryLambdaRole \
+  --policy-arn arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+```
 
-aws iam attach-role-policy --role-name TechStoryLambdaRole \\
+```bash
+aws iam attach-role-policy \
+  --role-name TechStoryLambdaRole \
+  --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+```
 
-&#x20; --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+> For production deployment, replace broad managed policies with least-privilege IAM policies.
 
+### Step 2 — Create DynamoDB Table
 
+```bash
+aws dynamodb create-table \
+  --table-name TechStoryCreations \
+  --attribute-definitions \
+    AttributeName=date,AttributeType=S \
+    AttributeName=category,AttributeType=S \
+  --key-schema \
+    AttributeName=date,KeyType=HASH \
+    AttributeName=category,KeyType=RANGE \
+  --billing-mode PAY_PER_REQUEST
+```
 
-\# 2. Create DynamoDB Table
+### Step 3 — Package Lambda
 
-aws dynamodb create-table --table-name TechStoryCreations \\
+```bash
+zip lambda_function.zip lambda_function.py
+```
 
-&#x20; --attribute-definitions \\
+### Step 4 — Deploy Lambda
 
-&#x20;   AttributeName=date,AttributeType=S \\
+Replace `ACCOUNT_ID` with your AWS account ID:
 
-&#x20;   AttributeName=category,AttributeType=S \\
+```bash
+aws lambda create-function \
+  --function-name TechStoryAgent \
+  --runtime python3.12 \
+  --role arn:aws:iam::ACCOUNT_ID:role/TechStoryLambdaRole \
+  --handler lambda_function.lambda_handler \
+  --zip-file fileb://lambda_function.zip \
+  --timeout 30 \
+  --memory-size 256
+```
 
-&#x20; --key-schema \\
+### Step 5 — Configure EventBridge
 
-&#x20;   AttributeName=date,KeyType=HASH \\
+The target schedule is:
 
-&#x20;   AttributeName=category,KeyType=RANGE \\
+```text
+Every day
+08:00 AM
+Asia/Kolkata
+```
 
-&#x20; --billing-mode PAY\_PER\_REQUEST
+When using the `Asia/Kolkata` timezone, configure the Scheduler with the local-time expression:
 
+```text
+cron(0 8 * * ? *)
+```
 
+The EventBridge Scheduler execution role must have permission to invoke the Lambda function.
 
-\# 3. Deploy Lambda Function
+### Step 6 — Deploy S3 Website
 
-zip lambda\_function.zip lambda\_function.py
+Create the bucket:
 
-
-
-aws lambda create-function --function-name TechStoryAgent \\
-
-&#x20; --runtime python3.12 \\
-
-&#x20; --role arn:aws:iam::ACCOUNT\_ID:role/TechStoryLambdaRole \\
-
-&#x20; --handler lambda\_function.lambda\_handler \\
-
-&#x20; --zip-file fileb://lambda\_function.zip \\
-
-&#x20; --timeout 30 --memory-size 256
-
-
-
-\# 4. Create EventBridge Schedule (Daily 8:00 AM IST)
-
-aws scheduler create-schedule --name TechStoryTrigger \\
-
-&#x20; --schedule-expression "cron(30 2 \* \* ? \*)" \\
-
-&#x20; --schedule-expression-timezone "Asia/Kolkata" \\
-
-&#x20; --flexible-time-window '{"Mode":"OFF"}' \\
-
-&#x20; --target '{"Arn":"arn:aws:lambda:us-east-1:ACCOUNT\_ID:function:TechStoryAgent","RoleArn":"arn:aws:iam::ACCOUNT\_ID:role/TechStorySchedulerRole"}'
-
-
-
-\# 5. Create S3 Website
-
+```bash
 aws s3 mb s3://techstory-ai-dharaneesh
+```
 
-aws s3 website s3://techstory-ai-dharaneesh --index-document index.html
+Upload the website:
 
-aws s3 cp index.html s3://techstory-ai-dharaneesh/ --content-type "text/html"
+```bash
+aws s3 cp index.html \
+  s3://techstory-ai-dharaneesh/ \
+  --content-type "text/html"
+```
 
-🔑 Key Features
+Configure static website hosting:
 
-Table
+```bash
+aws s3 website s3://techstory-ai-dharaneesh \
+  --index-document index.html
+```
 
+> For production use, **Amazon CloudFront + S3** is recommended instead of direct public S3 website hosting.
 
+---
 
+## 🔮 Future Enhancements
 
+### 🧠 AI-Powered Story Generation
 
+Integrate **Amazon Bedrock** to generate richer, more natural, and context-aware technology stories.
 
+### 🖼️ AI Story Illustrations
 
-Feature
+Automatically generate a visual illustration for every daily story.
 
+### 🔊 Voice Narration
 
+Convert generated stories into audio using text-to-speech technology.
 
+### 🌍 Multi-Language Support
 
+Generate stories in:
 
-Description
+* English
+* Tamil
+* Hindi
+* Telugu
+* Malayalam
+* Other regional languages
 
+### 📱 Mobile Experience
 
+Develop a Progressive Web App for easier access from mobile devices.
 
+### 📊 Analytics Dashboard
 
+Track:
 
-🤖 Fully Autonomous	No manual intervention after deployment
+* Number of stories generated
+* Popular technologies
+* Story categories
+* Daily generation history
+* User engagement
 
-📚 100,000+ Unique Stories	Combinatorial creativity engine
+### 🔔 Notifications
 
-☁️ Serverless	No servers to manage or maintain
+Send daily stories through:
 
-💰 Cost-Free	Runs entirely on AWS Free Tier
+* Email
 
-📅 Daily Themes	Different technology focus each day
+### 🔎 Story Archive
 
-🔄 Reproducible	Date-seeded randomization ensures consistency
+Allow users to search and explore previously generated stories.
 
-🌐 Live Website	Beautiful dark-themed responsive UI
-
-⏰ Scheduled	Runs precisely at 8:00 AM IST daily
-
-View more
-
-💡 What I Learned
-
-Serverless Event-Driven Architecture — Designing systems that respond to events rather than running continuously
-
-AWS CLI Mastery — Building entire infrastructure programmatically through command line
-
-IAM Least Privilege — Creating minimal-permission roles for security-first design
-
-Combinatorial Creativity — Designing algorithms that produce coherent narratives from randomized components
-
-Cost Optimization — Architecting within Free Tier constraints
-
-Autonomous Systems — Building zero-maintenance, self-running applications
-
-🛠️ Tech Stack
-
-Runtime: Python 3.12
-
-Cloud: AWS (Lambda, EventBridge, DynamoDB, S3)
-
-Frontend: HTML5, CSS3 (Glassmorphism UI)
-
-Deployment: AWS CLI
-
-Scheduling: Cron-based (EventBridge Scheduler)
-
-Database: NoSQL (DynamoDB - Pay per request)
-
-👤 Author
-
-Dharaneesh K
+---
 
 
+## 🔗 Demo / Project Links
 
-GitHub: @dharaneesh-28
+🌐 **Live Website:**
+[TechStory AI](http://techstory-ai-dharaneesh.s3-website-us-east-1.amazonaws.com)
 
-Builder Center: TechStory AI Article
+📝 **AWS Builder Center Article:**
+[Read the Project Article](https://builder.aws.com/content/3IDiDXNiK7JXM1e3i0QM0DNUUsA/weekend-creative-agent-challenge-techstory-ai-autonomous-technology-story-generator)
 
+💻 **GitHub:**
+[github.com/dharaneesh-28](https://github.com/dharaneesh-28)
+
+
+---
+
+## 🚀 TechStory AI
+
+**Imagine. Generate. Automate. Every Day.**
+
+Built with  Dharaneesh K using AWS Serverless Technologies.
